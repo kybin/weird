@@ -31,6 +31,6 @@ func TestReadNode(t *testing.T) {
 		t.Fatalf("Result(): has unexpected error: %v", err)
 	}
 	if got != want {
-		t.Fatalf("Result(): got %v, want %v", want, got)
+		t.Fatalf("Result(): got %v, want %v", got, want)
 	}
 }
