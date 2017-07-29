@@ -21,7 +21,7 @@ func TestRead(t *testing.T) {
 		t.Fatal("could not close temp file:", err)
 	}
 
-	n := NewRead(ReadParm{
+	n := NewRead("read", ReadParm{
 		fpath: tmpf.Name(),
 	})
 

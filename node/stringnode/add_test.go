@@ -11,7 +11,7 @@ func TestAdd(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		addNode := NewAdd(AddParm{
+		addNode := NewAdd("add", AddParm{
 			adds: []string{c.want},
 		})
 
@@ -52,10 +52,10 @@ func TestTwoAdd(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		firstNode := NewAdd(AddParm{
+		firstNode := NewAdd("first", AddParm{
 			adds: c.a,
 		})
-		secondNode := NewAdd(AddParm{
+		secondNode := NewAdd("second", AddParm{
 			adds: c.b,
 		})
 		secondNode.AddInput(firstNode)

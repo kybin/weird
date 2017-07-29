@@ -9,6 +9,7 @@ type Add struct {
 	data  []string
 	error error
 
+	name   string
 	inputs []Node // Adds could have 0 or 1 input.
 	parm   AddParm
 }
@@ -18,12 +19,23 @@ type AddParm struct {
 }
 
 // NewAdd creates a new Add node.
-func NewAdd(parm AddParm) *Add {
+func NewAdd(name string, parm AddParm) *Add {
 	n := &Add{
+		name:   name,
 		inputs: make([]Node, 1),
 	}
 	n.parm = parm
 	return n
+}
+
+// Name is a name of the node.
+func (n *Add) Name() string {
+	return n.name
+}
+
+// Type is a type name of the node.
+func (n *Add) Type() string {
+	return "Add"
 }
 
 // Inputs returns it's inputs.
