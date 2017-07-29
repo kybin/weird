@@ -6,14 +6,14 @@ import (
 	"testing"
 )
 
-func TestReadNode(t *testing.T) {
+func TestRead(t *testing.T) {
 	tmpf, err := ioutil.TempFile("", "example")
 	if err != nil {
 		t.Fatal("could not create temp file:", err)
 	}
 	defer os.Remove(tmpf.Name())
 
-	content := []byte("hi, there.\n this is a test for ReadNode")
+	content := []byte("hi, there.\n this is a test for Read")
 	if _, err := tmpf.Write(content); err != nil {
 		t.Fatal("could not write content to temp file:", err)
 	}
@@ -21,7 +21,7 @@ func TestReadNode(t *testing.T) {
 		t.Fatal("could not close temp file:", err)
 	}
 
-	n := NewReadNode(ReadNodeParm{
+	n := NewRead(ReadParm{
 		fpath: tmpf.Name(),
 	})
 

@@ -2,7 +2,7 @@ package stringnode
 
 import "testing"
 
-func TestReplaceNode(t *testing.T) {
+func TestReplace(t *testing.T) {
 	cases := []struct {
 		input string
 		from  string
@@ -20,13 +20,13 @@ func TestReplaceNode(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		// create mock ReadNode.
-		readNode := &ReadNode{
+		// create mock Read.
+		readNode := &Read{
 			done:   true,
 			result: c.input,
 		}
 
-		n := NewReplaceNode(ReplaceNodeParm{
+		n := NewReplace(ReplaceParm{
 			from: c.from,
 			to:   c.to,
 			n:    c.n,
@@ -36,10 +36,10 @@ func TestReplaceNode(t *testing.T) {
 
 		got, err := n.Result()
 		if err != nil {
-			t.Fatalf("ReplaceNode.Result(): unexpected error: %v", err)
+			t.Fatalf("Replace.Result(): unexpected error: %v", err)
 		}
 		if got != c.want {
-			t.Fatalf("ReplaceNode.Result(): got \"%v\", want \"%v\"", got, c.want)
+			t.Fatalf("Replace.Result(): got \"%v\", want \"%v\"", got, c.want)
 		}
 	}
 }

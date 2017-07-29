@@ -2,35 +2,35 @@ package stringnode
 
 import "io/ioutil"
 
-// ReadNode implements stringnode.Node.
-type ReadNode struct {
+// Read implements stringnode.Node.
+type Read struct {
 	done   bool
 	result string
 	error  error
 
-	parm ReadNodeParm
+	parm ReadParm
 }
 
-type ReadNodeParm struct {
+type ReadParm struct {
 	fpath string
 }
 
-// NewReadNode creates a new ReadNode and initialize it's parameters.
-func NewReadNode(parm ReadNodeParm) *ReadNode {
-	n := &ReadNode{}
+// NewRead creates a new Read and initialize it's parameters.
+func NewRead(parm ReadParm) *Read {
+	n := &Read{}
 	n.parm = parm
 	return n
 }
 
 // Inputs implements Node interface, nothing else.
-func (n *ReadNode) Inputs() []Node {
+func (n *Read) Inputs() []Node {
 	return nil
 }
 
 // AddInput will do nothing!
-func (n *ReadNode) AddInput(in Node) {}
+func (n *Read) AddInput(in Node) {}
 
-func (n ReadNode) Result() (string, error) {
+func (n Read) Result() (string, error) {
 	if !n.done {
 		n.read()
 	}
@@ -40,7 +40,7 @@ func (n ReadNode) Result() (string, error) {
 }
 
 // read reads content from a file.
-func (n *ReadNode) read() {
+func (n *Read) read() {
 	bs, err := ioutil.ReadFile(n.parm.fpath)
 	if err != nil {
 		n.error = err

@@ -5,38 +5,38 @@ import (
 	"strings"
 )
 
-type ReplaceNode struct {
+type Replace struct {
 	done   bool
 	result string
 	error  error
 
 	inputs []Node
 
-	parm ReplaceNodeParm
+	parm ReplaceParm
 }
 
-type ReplaceNodeParm struct {
+type ReplaceParm struct {
 	from string
 	to   string
 	n    int
 }
 
-func NewReplaceNode(parm ReplaceNodeParm) *ReplaceNode {
-	return &ReplaceNode{
+func NewReplace(parm ReplaceParm) *Replace {
+	return &Replace{
 		inputs: make([]Node, 0),
 		parm:   parm,
 	}
 }
 
-func (n *ReplaceNode) Inputs() []Node {
+func (n *Replace) Inputs() []Node {
 	return n.inputs
 }
 
-func (n *ReplaceNode) AddInput(in Node) {
+func (n *Replace) AddInput(in Node) {
 	n.inputs = append(n.inputs, in)
 }
 
-func (n *ReplaceNode) Result() (string, error) {
+func (n *Replace) Result() (string, error) {
 	if !n.done {
 		n.replace()
 	}
@@ -45,7 +45,7 @@ func (n *ReplaceNode) Result() (string, error) {
 	return n.result, n.error
 }
 
-func (n *ReplaceNode) replace() {
+func (n *Replace) replace() {
 	if n.inputs == nil {
 		n.error = fmt.Errorf("input is nil")
 		return
