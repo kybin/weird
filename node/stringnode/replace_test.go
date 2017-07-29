@@ -20,11 +20,9 @@ func TestReplace(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		// create mock Read.
-		readNode := &Read{
-			done:   true,
-			result: []string{c.input},
-		}
+		addNode := NewAdd(AddParm{
+			adds: []string{c.input},
+		})
 
 		n := NewReplace(ReplaceParm{
 			from: c.from,
@@ -32,7 +30,7 @@ func TestReplace(t *testing.T) {
 			n:    c.n,
 		})
 
-		n.AddInput(readNode)
+		n.AddInput(addNode)
 
 		got, err := n.Result()
 		if err != nil {
