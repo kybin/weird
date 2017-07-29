@@ -30,7 +30,10 @@ func TestRead(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Result(): has unexpected error: %v", err)
 	}
-	if got != want {
+	if len(got) != 1 {
+		t.Fatalf("Result(): length of got should 1 but it's %v", len(got))
+	}
+	if got[0] != want {
 		t.Fatalf("Result(): got %v, want %v", got, want)
 	}
 }

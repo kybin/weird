@@ -5,7 +5,7 @@ import "io/ioutil"
 // Read implements stringnode.Node.
 type Read struct {
 	done   bool
-	result string
+	result []string
 	error  error
 
 	parm ReadParm
@@ -30,7 +30,7 @@ func (n *Read) Inputs() []Node {
 // AddInput will do nothing!
 func (n *Read) AddInput(in Node) {}
 
-func (n Read) Result() (string, error) {
+func (n Read) Result() ([]string, error) {
 	if !n.done {
 		n.read()
 	}
@@ -46,5 +46,5 @@ func (n *Read) read() {
 		n.error = err
 		return
 	}
-	n.result = string(bs)
+	n.result = []string{string(bs)}
 }

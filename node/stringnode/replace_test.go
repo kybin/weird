@@ -23,7 +23,7 @@ func TestReplace(t *testing.T) {
 		// create mock Read.
 		readNode := &Read{
 			done:   true,
-			result: c.input,
+			result: []string{c.input},
 		}
 
 		n := NewReplace(ReplaceParm{
@@ -38,7 +38,7 @@ func TestReplace(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Replace.Result(): unexpected error: %v", err)
 		}
-		if got != c.want {
+		if got[0] != c.want {
 			t.Fatalf("Replace.Result(): got \"%v\", want \"%v\"", got, c.want)
 		}
 	}

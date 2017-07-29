@@ -7,7 +7,7 @@ import (
 
 type Replace struct {
 	done   bool
-	result string
+	result []string
 	error  error
 
 	inputs []Node
@@ -36,7 +36,7 @@ func (n *Replace) AddInput(in Node) {
 	n.inputs = append(n.inputs, in)
 }
 
-func (n *Replace) Result() (string, error) {
+func (n *Replace) Result() ([]string, error) {
 	if !n.done {
 		n.replace()
 	}
@@ -55,12 +55,15 @@ func (n *Replace) replace() {
 		return
 	}
 
-	in, err := n.inputs[0].Result()
+	inData, err := n.inputs[0].Result()
 	if err != nil {
 		n.error = err
 		return
 	}
 
-	n.result = strings.Replace(in, n.parm.from, n.parm.to, n.parm.n)
+	n.result = make([]string, len(inData))
+	for i := range inData {
+		n.result[i] = strings.Replace(inData[i], n.parm.from, n.parm.to, n.parm.n)
+	}
 	return
 }
