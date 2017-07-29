@@ -46,6 +46,12 @@ func (n *Add) Result() ([]string, error) {
 	return n.data, n.error
 }
 
+// VeiledResult implements node.Node.
+func (n *Add) VeiledResult() (interface{}, error) {
+	data, err := n.Result()
+	return interface{}(data), err
+}
+
 // add adds new data to it's data.
 func (n *Add) add() {
 	if n.parm.adds == nil {

@@ -45,6 +45,12 @@ func (n *Replace) Result() ([]string, error) {
 	return n.result, n.error
 }
 
+// VeiledResult implements node.Node.
+func (n *Replace) VeiledResult() (interface{}, error) {
+	data, err := n.Result()
+	return interface{}(data), err
+}
+
 func (n *Replace) replace() {
 	if n.inputs == nil {
 		n.error = fmt.Errorf("input is nil")
