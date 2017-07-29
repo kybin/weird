@@ -23,8 +23,8 @@ func NewAdd(name string, parm AddParm) *Add {
 	n := &Add{
 		name:   name,
 		inputs: make([]Node, 1),
+		parm:   parm,
 	}
-	n.parm = parm
 	return n
 }
 

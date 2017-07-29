@@ -20,8 +20,8 @@ type ReadParm struct {
 func NewRead(name string, parm ReadParm) *Read {
 	n := &Read{
 		name: name,
+		parm: parm,
 	}
-	n.parm = parm
 	return n
 }
 
