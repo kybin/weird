@@ -1,7 +1,5 @@
 package stringnode
 
-import "errors"
-
 // Add appends new strings to it's input data.
 type Add struct {
 	done bool
@@ -67,7 +65,7 @@ func (n *Add) VeiledResult() (interface{}, error) {
 // add adds new data to it's data.
 func (n *Add) add() {
 	if n.parm.adds == nil {
-		n.error = errors.New("Add: parm.adds should not nil")
+		n.error = NewError(n, "parm.adds should not nil")
 		return
 	}
 
@@ -78,7 +76,7 @@ func (n *Add) add() {
 			return
 		}
 		if data == nil {
-			n.error = errors.New("Add: first input's data should not nil")
+			n.error = NewError(n, "first input's data should not nil")
 			return
 		}
 		n.data = data

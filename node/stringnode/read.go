@@ -62,7 +62,7 @@ func (n *Read) VeiledResult() (interface{}, error) {
 func (n *Read) read() {
 	bs, err := ioutil.ReadFile(n.parm.fpath)
 	if err != nil {
-		n.error = err
+		n.error = NewError(n, err.Error())
 		return
 	}
 	n.result = []string{string(bs)}

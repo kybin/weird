@@ -1,9 +1,6 @@
 package stringnode
 
-import (
-	"fmt"
-	"strings"
-)
+import "strings"
 
 type Replace struct {
 	done   bool
@@ -65,11 +62,11 @@ func (n *Replace) VeiledResult() (interface{}, error) {
 
 func (n *Replace) replace() {
 	if n.inputs == nil {
-		n.error = fmt.Errorf("input is nil")
+		n.error = NewError(n, "input is nil")
 		return
 	}
 	if len(n.inputs) != 1 {
-		n.error = fmt.Errorf("should have 1 input")
+		n.error = NewError(n, "should have 1 input")
 		return
 	}
 
