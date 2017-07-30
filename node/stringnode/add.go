@@ -22,6 +22,7 @@ func NewAdd(name string, parm AddParm) *Add {
 		name:   name,
 		inputs: make([]Node, 1),
 		parm:   parm,
+		data:   []string{},
 	}
 	return n
 }
