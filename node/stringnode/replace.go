@@ -3,9 +3,10 @@ package stringnode
 import "strings"
 
 type Replace struct {
-	done   bool
-	result []string
-	error  error
+	done bool
+
+	data  []string
+	error error
 
 	name   string
 	inputs []Node
@@ -51,7 +52,7 @@ func (n *Replace) Result() ([]string, error) {
 	}
 	n.done = true
 
-	return n.result, n.error
+	return n.data, n.error
 }
 
 // VeiledResult implements node.Node.
@@ -76,9 +77,9 @@ func (n *Replace) replace() {
 		return
 	}
 
-	n.result = make([]string, len(inData))
+	n.data = make([]string, len(inData))
 	for i := range inData {
-		n.result[i] = strings.Replace(inData[i], n.parm.from, n.parm.to, n.parm.n)
+		n.data[i] = strings.Replace(inData[i], n.parm.from, n.parm.to, n.parm.n)
 	}
 	return
 }

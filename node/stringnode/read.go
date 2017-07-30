@@ -4,9 +4,10 @@ import "io/ioutil"
 
 // Read implements stringnode.Node.
 type Read struct {
-	done   bool
-	result []string
-	error  error
+	done bool
+
+	data  []string
+	error error
 
 	name string
 	parm ReadParm
@@ -49,7 +50,7 @@ func (n Read) Result() ([]string, error) {
 	}
 	n.done = true
 
-	return n.result, n.error
+	return n.data, n.error
 }
 
 // VeiledResult implements node.Node.
@@ -65,5 +66,5 @@ func (n *Read) read() {
 		n.error = NewError(n, err.Error())
 		return
 	}
-	n.result = []string{string(bs)}
+	n.data = []string{string(bs)}
 }
