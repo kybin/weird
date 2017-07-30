@@ -6,5 +6,4 @@ type Node interface {
 	Inputs() []Node
 	AddInput(Node)
 	Result() ([]string, error)
-	VeiledResult() (interface{}, error)
 }

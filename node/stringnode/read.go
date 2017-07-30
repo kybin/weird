@@ -53,12 +53,6 @@ func (n Read) Result() ([]string, error) {
 	return n.data, n.error
 }
 
-// VeiledResult implements node.Node.
-func (n *Read) VeiledResult() (interface{}, error) {
-	data, err := n.Result()
-	return interface{}(data), err
-}
-
 // read reads content from a file.
 func (n *Read) read() {
 	bs, err := ioutil.ReadFile(n.parm.fpath)
