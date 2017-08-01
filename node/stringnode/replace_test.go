@@ -20,11 +20,11 @@ func TestReplace(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		addNode := NewAdd("add", AddParm{
+		addNode := NewAdd(AddParm{
 			adds: []string{c.input},
 		})
 
-		n := NewReplace("replace", ReplaceParm{
+		n := NewReplace(ReplaceParm{
 			from: c.from,
 			to:   c.to,
 			n:    c.n,

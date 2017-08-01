@@ -9,7 +9,6 @@ type Join struct {
 	data  []string
 	error error
 
-	name   string
 	inputs []Node // Join should have 1 input.
 	parm   JoinParm
 }
@@ -19,18 +18,12 @@ type JoinParm struct {
 }
 
 // NewJoin creates a new Join node.
-func NewJoin(name string, parm JoinParm) *Join {
+func NewJoin(parm JoinParm) *Join {
 	n := &Join{
-		name:   name,
 		inputs: make([]Node, 1),
 		parm:   parm,
 	}
 	return n
-}
-
-// Name is a name of the node.
-func (n *Join) Name() string {
-	return n.name
 }
 
 // Type is a type name of the node.

@@ -9,15 +9,15 @@ func TestErrorPassing(t *testing.T) {
 		want string
 	}{
 		{
-			a: NewAdd("a", AddParm{
+			a: NewAdd(AddParm{
 				adds: nil, // Error!
 			}),
-			b: NewReplace("b", ReplaceParm{
+			b: NewReplace(ReplaceParm{
 				from: "x",
 				to:   "y",
 				n:    -1,
 			}),
-			want: "a (Add): parm.adds should not nil",
+			want: "Add: parm.adds should not nil",
 		},
 	}
 

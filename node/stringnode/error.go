@@ -8,7 +8,7 @@ type Error struct {
 }
 
 func (e *Error) Error() string {
-	return fmt.Sprintf("%v (%v): %v", e.Node.Name(), e.Node.Type(), e.Value)
+	return fmt.Sprintf("%v: %v", e.Node.Type(), e.Value)
 }
 
 func NewError(n Node, v string) *Error {

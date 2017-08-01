@@ -9,7 +9,6 @@ type Read struct {
 	data  []string
 	error error
 
-	name string
 	parm ReadParm
 }
 
@@ -18,17 +17,11 @@ type ReadParm struct {
 }
 
 // NewRead creates a new Read and initialize it's parameters.
-func NewRead(name string, parm ReadParm) *Read {
+func NewRead(parm ReadParm) *Read {
 	n := &Read{
-		name: name,
 		parm: parm,
 	}
 	return n
-}
-
-// Name is a name of the node.
-func (n *Read) Name() string {
-	return n.name
 }
 
 // Type is a type name of the node.

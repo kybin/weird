@@ -29,10 +29,10 @@ func TestJoin(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		addNode := NewAdd("add1", AddParm{
+		addNode := NewAdd(AddParm{
 			adds: c.data,
 		})
-		joinNode := NewJoin("join1", JoinParm{
+		joinNode := NewJoin(JoinParm{
 			with: c.with,
 		})
 		joinNode.AddInput(addNode)

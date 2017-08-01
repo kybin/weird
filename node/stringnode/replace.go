@@ -8,7 +8,6 @@ type Replace struct {
 	data  []string
 	error error
 
-	name   string
 	inputs []Node
 
 	parm ReplaceParm
@@ -20,17 +19,11 @@ type ReplaceParm struct {
 	n    int
 }
 
-func NewReplace(name string, parm ReplaceParm) *Replace {
+func NewReplace(parm ReplaceParm) *Replace {
 	return &Replace{
-		name:   name,
 		inputs: make([]Node, 0),
 		parm:   parm,
 	}
-}
-
-// Name is a name of the node.
-func (n *Replace) Name() string {
-	return n.name
 }
 
 // Type is a type name of the node.
