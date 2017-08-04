@@ -18,7 +18,7 @@ func NewContext() *Context {
 }
 
 // ListNodeTypes shows all registered node types in string.
-func (c Context) ListNodeTypes() []string {
+func (c *Context) ListNodeTypes() []string {
 	return stringnode.List()
 }
 
@@ -27,7 +27,7 @@ func (c Context) ListNodeTypes() []string {
 //
 // If the name of already exists in Context, or if the type of node
 // is not registered in stringnode, it will return error.
-func (c Context) Create(name, typ string) (stringnode.Node, error) {
+func (c *Context) Create(name, typ string) (stringnode.Node, error) {
 	if _, ok := c.nodes[name]; ok {
 		return nil, fmt.Errorf("node name already exists: %v", name)
 	}
