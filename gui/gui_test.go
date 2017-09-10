@@ -12,12 +12,14 @@ import (
 func TestGui(t *testing.T) {
 	size := image.Pt(1280, 720)
 	win := NewWindow("Title", size)
-	win.Area.BackgroundColor = color.RGBA{0, 0, 255, 255}
-	win.Area.NewChild("header", TopHolder{100})
-	win.Area.NewChild("footer", BottomHolder{100})
+	win.Area.SetBackgroundColor(color.RGBA{0, 0, 255, 255})
+	header := win.Area.NewChild("header", TopHolder{100})
+	header.SetBackgroundColor(color.RGBA{255, 255, 255, 255})
+	footer := win.Area.NewChild("footer", BottomHolder{100})
+	footer.SetBackgroundColor(color.RGBA{0, 255, 0, 255})
 	body := win.Area.NewChild("body", Filler{})
 	right := body.NewChild("left", LeftHolder{300})
-	right.BackgroundColor = color.RGBA{255, 0, 0, 255}
+	right.SetBackgroundColor(color.RGBA{255, 0, 0, 255})
 	win.Area.Draw()
 	f, err := os.Create("test.png")
 	if err != nil {

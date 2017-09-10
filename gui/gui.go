@@ -91,7 +91,7 @@ type Area struct {
 	Parent   *Area
 	Children map[string]*Area
 
-	BackgroundColor color.RGBA
+	bgColor *color.RGBA
 }
 
 func NewArea(rect image.Rectangle, window *Window, parent *Area) *Area {
@@ -104,12 +104,28 @@ func NewArea(rect image.Rectangle, window *Window, parent *Area) *Area {
 	}
 }
 
+func (a *Area) SetBackgroundColor(c color.RGBA) {
+	a.bgColor = &c
+}
+
+func (a *Area) BackgroundColor() color.RGBA {
+	p := a
+	for p != nil {
+		if p.bgColor != nil {
+			// TODO: composite with it's parent color.
+			return *p.bgColor
+		}
+		p = p.Parent
+	}
+	return color.RGBA{}
+}
+
 func (a *Area) Draw() {
 	pixels := a.Window.pixels
 	r := a.Full
 	for y := r.Min.Y; y < r.Max.Y; y++ {
 		for x := r.Min.X; x < r.Max.X; x++ {
-			pixels.Set(x, y, a.BackgroundColor)
+			pixels.Set(x, y, a.BackgroundColor())
 		}
 	}
 	for _, child := range a.Children {
