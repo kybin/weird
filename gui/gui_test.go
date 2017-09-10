@@ -2,16 +2,26 @@ package gui
 
 import (
 	"image"
+	"image/color"
+	"image/png"
+	"log"
+	"os"
 	"testing"
 )
 
 func TestGui(t *testing.T) {
 	size := image.Pt(1280, 720)
 	win := NewWindow("Title", size)
+	win.Area.BackgroundColor = color.RGBA{0, 0, 255, 255}
 	win.Area.NewChild("header", TopHolder{100})
 	win.Area.NewChild("footer", BottomHolder{100})
 	body := win.Area.NewChild("body", Filler{})
-	body.NewChild("left", LeftHolder{300})
-	// right := body.NewChild("left", LeftHolder{300})
-	// right.Set("backgroundColor", "#112233")
+	right := body.NewChild("left", LeftHolder{300})
+	right.BackgroundColor = color.RGBA{255, 0, 0, 255}
+	win.Area.Draw()
+	f, err := os.Create("test.png")
+	if err != nil {
+		log.Fatal(err)
+	}
+	png.Encode(f, win.pixels)
 }
