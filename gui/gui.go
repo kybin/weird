@@ -106,11 +106,10 @@ func NewArea(rect image.Rectangle, window *Window, parent *Area) *Area {
 
 func (a *Area) Draw() {
 	pixels := a.Window.pixels
-	width := int(a.Window.Area.Full.Size().X)
 	r := a.Full
 	for y := r.Min.Y; y < r.Max.Y; y++ {
 		for x := r.Min.X; x < r.Max.X; x++ {
-			pixels[width*y+x] = a.BackgroundColor
+			pixels.Set(x, y, a.BackgroundColor)
 		}
 	}
 	for _, child := range a.Children {
@@ -128,13 +127,13 @@ func (a *Area) NewChild(name string, h PlaceHolder) *Area {
 
 type Window struct {
 	Area   *Area
-	pixels []color.Color
+	pixels *image.RGBA
 }
 
 func NewWindow(title string, size image.Point) *Window {
 	rect := image.Rectangle{image.Pt(0, 0), size}
 	win := &Window{}
 	win.Area = NewArea(rect, win, nil)
-	win.pixels = make([]color.Color, size.X*size.Y)
+	win.pixels = image.NewRGBA(rect)
 	return win
 }
