@@ -1,51 +1,19 @@
 package gui
 
-import "image/color"
-
-type Point struct {
-	X int
-	Y int
-}
-
-func Pt(X, Y int) Point {
-	return Point{X, Y}
-}
-
-type Rect struct {
-	Min Point
-	Max Point
-}
-
-func RectFromTwoPoints(min, max Point) Rect {
-	if max.X < min.X {
-		min.X, max.X = max.X, min.X
-	}
-	if max.Y < min.Y {
-		min.Y, max.Y = max.Y, min.Y
-	}
-	return Rect{
-		Min: min,
-		Max: max,
-	}
-}
-
-func (a Rect) Width() uint {
-	return uint(a.Max.X - a.Min.X)
-}
-
-func (a Rect) Height() uint {
-	return uint(a.Max.Y - a.Min.Y)
-}
+import (
+	"image"
+	"image/color"
+)
 
 type PlaceHolder interface {
-	Hold(Rect) (hold, remain Rect)
+	Hold(image.Rectangle) (hold, remain image.Rectangle)
 }
 
 type TopHolder struct {
 	Height uint
 }
 
-func (h TopHolder) Hold(r Rect) (Rect, Rect) {
+func (h TopHolder) Hold(r image.Rectangle) (image.Rectangle, image.Rectangle) {
 	hold := r
 	remain := r
 	y := r.Min.Y
@@ -62,7 +30,7 @@ type BottomHolder struct {
 	Height uint
 }
 
-func (h BottomHolder) Hold(r Rect) (Rect, Rect) {
+func (h BottomHolder) Hold(r image.Rectangle) (image.Rectangle, image.Rectangle) {
 	hold := r
 	remain := r
 	y := r.Max.Y
@@ -79,7 +47,7 @@ type LeftHolder struct {
 	Width uint
 }
 
-func (h LeftHolder) Hold(r Rect) (Rect, Rect) {
+func (h LeftHolder) Hold(r image.Rectangle) (image.Rectangle, image.Rectangle) {
 	hold := r
 	remain := r
 	x := r.Min.X
@@ -96,7 +64,7 @@ type RightHolder struct {
 	Width uint
 }
 
-func (h RightHolder) Hold(r Rect) (Rect, Rect) {
+func (h RightHolder) Hold(r image.Rectangle) (image.Rectangle, image.Rectangle) {
 	hold := r
 	remain := r
 	x := r.Max.X
@@ -111,13 +79,13 @@ func (h RightHolder) Hold(r Rect) (Rect, Rect) {
 
 type Filler struct{}
 
-func (f Filler) Hold(r Rect) (Rect, Rect) {
-	return r, RectFromTwoPoints(r.Max, r.Max)
+func (f Filler) Hold(r image.Rectangle) (image.Rectangle, image.Rectangle) {
+	return r, image.Rectangle{r.Max, r.Max}
 }
 
 type Area struct {
-	Full  Rect
-	Avail Rect
+	Full  image.Rectangle
+	Avail image.Rectangle
 
 	Window   *Window
 	Parent   *Area
@@ -126,7 +94,7 @@ type Area struct {
 	BackgroundColor color.RGBA
 }
 
-func NewArea(rect Rect, window *Window, parent *Area) *Area {
+func NewArea(rect image.Rectangle, window *Window, parent *Area) *Area {
 	return &Area{
 		Full:     rect,
 		Avail:    rect,
@@ -138,7 +106,7 @@ func NewArea(rect Rect, window *Window, parent *Area) *Area {
 
 func (a *Area) Draw() {
 	pixels := a.Window.pixels
-	width := int(a.Window.Area.Full.Width())
+	width := int(a.Window.Area.Full.Size().X)
 	r := a.Full
 	for y := r.Min.Y; y < r.Max.Y; y++ {
 		for x := r.Min.X; x < r.Max.X; x++ {
@@ -163,8 +131,8 @@ type Window struct {
 	pixels []color.Color
 }
 
-func NewWindow(title string, size Point) *Window {
-	rect := RectFromTwoPoints(Pt(0, 0), size)
+func NewWindow(title string, size image.Point) *Window {
+	rect := image.Rectangle{image.Pt(0, 0), size}
 	win := &Window{}
 	win.Area = NewArea(rect, win, nil)
 	win.pixels = make([]color.Color, size.X*size.Y)

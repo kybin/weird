@@ -1,9 +1,12 @@
 package gui
 
-import "testing"
+import (
+	"image"
+	"testing"
+)
 
 func TestGui(t *testing.T) {
-	size := Pt(1280, 720)
+	size := image.Pt(1280, 720)
 	win := NewWindow("Title", size)
 	win.Area.NewChild("header", TopHolder{100})
 	win.Area.NewChild("footer", BottomHolder{100})
