@@ -1,5 +1,7 @@
 package gui
 
+import "image/color"
+
 type Point struct {
 	X int
 	Y int
@@ -117,32 +119,54 @@ type Area struct {
 	Full  Rect
 	Avail Rect
 
+	Window   *Window
+	Parent   *Area
 	Children map[string]*Area
+
+	BackgroundColor color.RGBA
 }
 
-func NewArea(rect Rect) *Area {
+func NewArea(rect Rect, window *Window, parent *Area) *Area {
 	return &Area{
 		Full:     rect,
 		Avail:    rect,
+		Window:   window,
+		Parent:   parent,
 		Children: make(map[string]*Area),
+	}
+}
+
+func (a *Area) Draw() {
+	pixels := a.Window.pixels
+	width := int(a.Window.Area.Full.Width())
+	r := a.Full
+	for y := r.Min.Y; y < r.Max.Y; y++ {
+		for x := r.Min.X; x < r.Max.X; x++ {
+			pixels[width*y+x] = a.BackgroundColor
+		}
+	}
+	for _, child := range a.Children {
+		child.Draw()
 	}
 }
 
 func (a *Area) NewChild(name string, h PlaceHolder) *Area {
 	hold, remain := h.Hold(a.Avail)
 	a.Avail = remain
-	child := NewArea(hold)
+	child := NewArea(hold, a.Window, a)
 	a.Children[name] = child
 	return child
 }
 
 type Window struct {
-	Area *Area
+	Area   *Area
+	pixels []color.Color
 }
 
 func NewWindow(title string, size Point) *Window {
 	rect := RectFromTwoPoints(Pt(0, 0), size)
-	return &Window{
-		Area: NewArea(rect),
-	}
+	win := &Window{}
+	win.Area = NewArea(rect, win, nil)
+	win.pixels = make([]color.Color, size.X*size.Y)
+	return win
 }
