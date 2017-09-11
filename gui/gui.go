@@ -83,6 +83,32 @@ func (f Filler) Hold(r image.Rectangle) (image.Rectangle, image.Rectangle) {
 	return r, image.Rectangle{r.Max, r.Max}
 }
 
+type Padder struct {
+	Pad uint
+}
+
+func (p Padder) Hold(r image.Rectangle) (image.Rectangle, image.Rectangle) {
+	sx := r.Max.X - r.Min.X
+	sy := r.Max.Y - r.Min.Y
+	var xMin, xMax int
+	if sx < 2*int(p.Pad) {
+		xMin = r.Min.X + sx/2
+		xMax = xMin
+	} else {
+		xMin = r.Min.X + int(p.Pad)
+		xMax = r.Max.X - int(p.Pad)
+	}
+	var yMin, yMax int
+	if sy < 2*int(p.Pad) {
+		yMin = r.Min.Y + sy/2
+		yMax = yMin
+	} else {
+		yMin = r.Min.Y + int(p.Pad)
+		yMax = r.Max.Y - int(p.Pad)
+	}
+	return image.Rect(xMin, yMin, xMax, yMax), image.Rectangle{r.Max, r.Max}
+}
+
 type Area struct {
 	Full  image.Rectangle
 	Avail image.Rectangle

@@ -20,6 +20,8 @@ func TestGui(t *testing.T) {
 	body := win.Area.NewChild("body", Filler{})
 	right := body.NewChild("left", LeftHolder{300})
 	right.SetBackgroundColor(color.RGBA{255, 0, 0, 255})
+	pad := body.NewChild("pad", Padder{20})
+	pad.SetBackgroundColor(color.RGBA{0, 255, 255, 255})
 	win.Area.Draw()
 	f, err := os.Create("test.png")
 	if err != nil {
