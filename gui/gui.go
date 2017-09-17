@@ -4,6 +4,15 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	"log"
+
+	"golang.org/x/exp/shiny/driver"
+	"golang.org/x/exp/shiny/screen"
+	"golang.org/x/mobile/event/key"
+	"golang.org/x/mobile/event/lifecycle"
+	"golang.org/x/mobile/event/mouse"
+	"golang.org/x/mobile/event/paint"
+	"golang.org/x/mobile/event/size"
 )
 
 type PlaceHolder interface {
@@ -164,13 +173,51 @@ type Window struct {
 }
 
 func NewWindow(title string, size image.Point, area *Area) *Window {
-	rect := image.Rectangle{image.Pt(0, 0), size}
 	win := &Window{
-		Size:   size,
-		Area:   area,
-		pixels: image.NewRGBA(rect),
+		Size: size,
+		Area: area,
 	}
 	return win
+}
+
+func (win *Window) Open() {
+	win.Init()
+	win.Fit()
+	driver.Main(func(s screen.Screen) {
+		w, err := s.NewWindow(&screen.NewWindowOptions{Width: win.Size.X, Height: win.Size.Y})
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer w.Release()
+
+		buf, err := s.NewBuffer(win.Size)
+		if err != nil {
+			log.Fatal(err)
+		}
+		win.pixels = buf.RGBA()
+		for {
+			switch e := w.NextEvent().(type) {
+			case lifecycle.Event:
+				if e.To == lifecycle.StageDead {
+					return
+				}
+			case key.Event:
+			case mouse.Event:
+			case size.Event:
+				win.Size = image.Point{e.WidthPx, e.HeightPx}
+				buf, err = s.NewBuffer(win.Size)
+				if err != nil {
+					log.Fatal(err)
+				}
+				win.pixels = buf.RGBA()
+				win.Fit()
+				win.Area.Draw()
+			case paint.Event:
+			}
+			w.Upload(image.Point{}, buf, buf.Bounds())
+			w.Publish()
+		}
+	})
 }
 
 func (w *Window) Init() {

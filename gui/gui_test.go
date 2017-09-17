@@ -3,9 +3,6 @@ package gui
 import (
 	"image"
 	"image/color"
-	"image/png"
-	"log"
-	"os"
 	"testing"
 )
 
@@ -43,12 +40,5 @@ func TestGui(t *testing.T) {
 			},
 		},
 	})
-	win.Init()
-	win.Fit()
-	win.Area.Draw()
-	f, err := os.Create("test.png")
-	if err != nil {
-		log.Fatal(err)
-	}
-	png.Encode(f, win.pixels)
+	win.Open()
 }
