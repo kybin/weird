@@ -14,23 +14,28 @@ func TestGui(t *testing.T) {
 	win := NewWindow("Title", size, &Area{
 		Holder:  Filler{},
 		bgColor: &color.RGBA{0, 0, 255, 255},
-		Children: map[string]*Area{
-			"header": &Area{
+		Children: []*Area{
+			&Area{
+				Name:    "header",
 				Holder:  TopHolder{100},
 				bgColor: &color.RGBA{255, 255, 255, 255},
 			},
-			"footer": &Area{
+			&Area{
+				Name:    "footer",
 				Holder:  BottomHolder{100},
 				bgColor: &color.RGBA{0, 255, 0, 255},
 			},
-			"body": &Area{
+			&Area{
+				Name:   "body",
 				Holder: Filler{},
-				Children: map[string]*Area{
-					"left": &Area{
+				Children: []*Area{
+					&Area{
+						Name:    "left",
 						Holder:  LeftHolder{300},
 						bgColor: &color.RGBA{255, 0, 0, 255},
 					},
-					"pad": &Area{
+					&Area{
+						Name:    "pad",
 						Holder:  Padder{20},
 						bgColor: &color.RGBA{0, 255, 255, 255},
 					},

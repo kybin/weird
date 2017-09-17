@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 )
@@ -110,6 +111,7 @@ func (p Padder) Hold(r image.Rectangle) (image.Rectangle, image.Rectangle) {
 }
 
 type Area struct {
+	Name  string
 	Full  image.Rectangle
 	Avail image.Rectangle
 
@@ -119,7 +121,8 @@ type Area struct {
 
 	bgColor *color.RGBA
 
-	Children map[string]*Area // BUG: it will make Areas unordered.
+	ChildMap map[string]*Area
+	Children []*Area
 }
 
 func (a *Area) BackgroundColor() color.RGBA {
@@ -177,7 +180,13 @@ func (w *Window) Init() {
 func initAreaRecursive(a *Area, w *Window, p *Area) {
 	a.Window = w
 	a.Parent = p
+	a.ChildMap = make(map[string]*Area)
 	for _, ch := range a.Children {
+		_, ok := a.ChildMap[ch.Name]
+		if ok {
+			panic(fmt.Sprintf("already have child with name: %v", ch.Name))
+		}
+		a.ChildMap[ch.Name] = ch
 		initAreaRecursive(ch, w, a)
 	}
 }
