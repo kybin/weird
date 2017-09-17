@@ -147,14 +147,6 @@ func (a *Area) Draw() {
 	}
 }
 
-func (a *Area) InitRecursive(w *Window, p *Area) {
-	a.Window = w
-	a.Parent = p
-	for _, ch := range a.Children {
-		ch.InitRecursive(w, a)
-	}
-}
-
 func (a *Area) DoRecursive(f func(*Area)) {
 	f(a)
 	for _, ch := range a.Children {
@@ -179,7 +171,15 @@ func NewWindow(title string, size image.Point, area *Area) *Window {
 }
 
 func (w *Window) Init() {
-	w.Area.InitRecursive(w, nil)
+	initAreaRecursive(w.Area, w, nil)
+}
+
+func initAreaRecursive(a *Area, w *Window, p *Area) {
+	a.Window = w
+	a.Parent = p
+	for _, ch := range a.Children {
+		initAreaRecursive(ch, w, a)
+	}
 }
 
 func (w *Window) Fit() {
