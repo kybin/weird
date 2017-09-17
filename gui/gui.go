@@ -113,25 +113,13 @@ type Area struct {
 	Full  image.Rectangle
 	Avail image.Rectangle
 
-	Window   *Window
-	Parent   *Area
-	Children map[string]*Area
+	Window *Window
+	Parent *Area
+	Holder PlaceHolder
 
 	bgColor *color.RGBA
-}
 
-func NewArea(rect image.Rectangle, window *Window, parent *Area) *Area {
-	return &Area{
-		Full:     rect,
-		Avail:    rect,
-		Window:   window,
-		Parent:   parent,
-		Children: make(map[string]*Area),
-	}
-}
-
-func (a *Area) SetBackgroundColor(c color.RGBA) {
-	a.bgColor = &c
+	Children map[string]*Area // BUG: it will make Areas unordered.
 }
 
 func (a *Area) BackgroundColor() color.RGBA {
@@ -159,23 +147,52 @@ func (a *Area) Draw() {
 	}
 }
 
-func (a *Area) NewChild(name string, h PlaceHolder) *Area {
-	hold, remain := h.Hold(a.Avail)
-	a.Avail = remain
-	child := NewArea(hold, a.Window, a)
-	a.Children[name] = child
-	return child
+func (a *Area) InitRecursive(w *Window, p *Area) {
+	a.Window = w
+	a.Parent = p
+	for _, ch := range a.Children {
+		ch.InitRecursive(w, a)
+	}
+}
+
+func (a *Area) DoRecursive(f func(*Area)) {
+	f(a)
+	for _, ch := range a.Children {
+		ch.DoRecursive(f)
+	}
 }
 
 type Window struct {
+	Size   image.Point
 	Area   *Area
 	pixels *image.RGBA
 }
 
-func NewWindow(title string, size image.Point) *Window {
+func NewWindow(title string, size image.Point, area *Area) *Window {
 	rect := image.Rectangle{image.Pt(0, 0), size}
-	win := &Window{}
-	win.Area = NewArea(rect, win, nil)
-	win.pixels = image.NewRGBA(rect)
+	win := &Window{
+		Size:   size,
+		Area:   area,
+		pixels: image.NewRGBA(rect),
+	}
 	return win
+}
+
+func (w *Window) Init() {
+	w.Area.InitRecursive(w, nil)
+}
+
+func (w *Window) Fit() {
+	w.Area.Full = image.Rectangle{image.Point{}, w.Size}
+	w.Area.Avail = w.Area.Full
+
+	w.Area.DoRecursive(func(a *Area) {
+		if a.Parent == nil { // w.Area
+			return
+		}
+		hold, remain := a.Holder.Hold(a.Parent.Avail)
+		a.Parent.Avail = remain
+		a.Full = hold
+		a.Avail = hold
+	})
 }
