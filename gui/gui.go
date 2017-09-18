@@ -200,9 +200,9 @@ func (win *Window) Open() {
 				win.Fit()
 				win.Draw()
 			case paint.Event:
+				w.Upload(image.Point{}, buf, buf.Bounds())
+				w.Publish()
 			}
-			w.Upload(image.Point{}, buf, buf.Bounds())
-			w.Publish()
 		}
 	})
 }
