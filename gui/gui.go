@@ -146,19 +146,6 @@ func (a *Area) BackgroundColor() color.RGBA {
 	return color.RGBA{}
 }
 
-func (a *Area) Draw() {
-	pixels := a.Window.pixels
-	r := a.Full
-	for y := r.Min.Y; y < r.Max.Y; y++ {
-		for x := r.Min.X; x < r.Max.X; x++ {
-			pixels.Set(x, y, a.BackgroundColor())
-		}
-	}
-	for _, child := range a.Children {
-		child.Draw()
-	}
-}
-
 func (a *Area) DoRecursive(f func(*Area)) {
 	f(a)
 	for _, ch := range a.Children {
@@ -211,7 +198,7 @@ func (win *Window) Open() {
 				}
 				win.pixels = buf.RGBA()
 				win.Fit()
-				win.Area.Draw()
+				win.Draw()
 			case paint.Event:
 			}
 			w.Upload(image.Point{}, buf, buf.Bounds())
@@ -250,5 +237,16 @@ func (w *Window) Fit() {
 		a.Parent.Avail = remain
 		a.Full = hold
 		a.Avail = hold
+	})
+}
+
+func (w *Window) Draw() {
+	w.Area.DoRecursive(func(a *Area) {
+		r := a.Full
+		for y := r.Min.Y; y < r.Max.Y; y++ {
+			for x := r.Min.X; x < r.Max.X; x++ {
+				w.pixels.Set(x, y, a.BackgroundColor())
+			}
+		}
 	})
 }
