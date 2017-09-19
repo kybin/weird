@@ -243,6 +243,9 @@ func (w *Window) Fit() {
 
 func (w *Window) Draw() {
 	w.Area.DoRecursive(func(a *Area) {
+		if a.Children != nil && len(a.Children) != 0 {
+			return
+		}
 		draw.Draw(w.pixels, a.Full, image.NewUniform(a.BackgroundColor()), image.Point{}, draw.Src)
 	})
 }
