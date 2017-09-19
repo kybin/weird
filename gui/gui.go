@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	"image/draw"
 	"log"
-	"sync"
 
 	"golang.org/x/exp/shiny/driver"
 	"golang.org/x/exp/shiny/screen"
@@ -243,18 +243,6 @@ func (w *Window) Fit() {
 
 func (w *Window) Draw() {
 	w.Area.DoRecursive(func(a *Area) {
-		wg := &sync.WaitGroup{}
-		r := a.Full
-		for y := r.Min.Y; y < r.Max.Y; y++ {
-			wg.Add(1)
-			go func(y int) {
-				defer wg.Done()
-				bg := a.BackgroundColor()
-				for x := r.Min.X; x < r.Max.X; x++ {
-					w.pixels.Set(x, y, bg)
-				}
-			}(y)
-		}
-		wg.Wait()
+		draw.Draw(w.pixels, a.Full, image.NewUniform(a.BackgroundColor()), image.Point{}, draw.Src)
 	})
 }
