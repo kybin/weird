@@ -129,7 +129,7 @@ type Area struct {
 	Parent *Area
 	Holder PlaceHolder
 
-	bgColor *color.RGBA
+	BgColor *color.RGBA
 
 	ChildMap map[string]*Area
 	Children []*Area
@@ -138,9 +138,9 @@ type Area struct {
 func (a *Area) BackgroundColor() color.RGBA {
 	p := a
 	for p != nil {
-		if p.bgColor != nil {
+		if p.BgColor != nil {
 			// TODO: composite with it's parent color.
-			return *p.bgColor
+			return *p.BgColor
 		}
 		p = p.Parent
 	}

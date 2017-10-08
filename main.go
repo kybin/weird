@@ -1,40 +1,41 @@
-package gui
+package main
 
 import (
 	"image"
 	"image/color"
-	"testing"
+
+	"github.com/kybin/weird/gui"
 )
 
-func TestGui(t *testing.T) {
+func main() {
 	size := image.Pt(1280, 720)
-	win := NewWindow("Title", size, &Area{
-		Holder:  Filler{},
-		bgColor: &color.RGBA{0, 0, 255, 255},
-		Children: []*Area{
-			&Area{
+	win := gui.NewWindow("Title", size, &gui.Area{
+		Holder:  gui.Filler{},
+		BgColor: &color.RGBA{0, 0, 255, 255},
+		Children: []*gui.Area{
+			&gui.Area{
 				Name:    "header",
-				Holder:  TopHolder{100},
-				bgColor: &color.RGBA{255, 255, 255, 255},
+				Holder:  gui.TopHolder{100},
+				BgColor: &color.RGBA{255, 255, 255, 255},
 			},
-			&Area{
+			&gui.Area{
 				Name:    "footer",
-				Holder:  BottomHolder{100},
-				bgColor: &color.RGBA{0, 255, 0, 255},
+				Holder:  gui.BottomHolder{100},
+				BgColor: &color.RGBA{0, 255, 0, 255},
 			},
-			&Area{
+			&gui.Area{
 				Name:   "body",
-				Holder: Filler{},
-				Children: []*Area{
-					&Area{
+				Holder: gui.Filler{},
+				Children: []*gui.Area{
+					&gui.Area{
 						Name:    "left",
-						Holder:  LeftHolder{300},
-						bgColor: &color.RGBA{255, 0, 0, 255},
+						Holder:  gui.LeftHolder{300},
+						BgColor: &color.RGBA{255, 0, 0, 255},
 					},
-					&Area{
+					&gui.Area{
 						Name:    "pad",
-						Holder:  Padder{20},
-						bgColor: &color.RGBA{0, 255, 255, 255},
+						Holder:  gui.Padder{20},
+						BgColor: &color.RGBA{0, 255, 255, 255},
 					},
 				},
 			},
