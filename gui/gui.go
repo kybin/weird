@@ -243,8 +243,18 @@ func (w *Window) Fit() {
 
 func (w *Window) Draw() {
 	w.Area.DoRecursive(func(a *Area) {
-		if a.Children != nil && len(a.Children) != 0 {
-			return
+		if a.Children != nil {
+			hasHole := false
+			for _, c := range a.Children {
+				_, ok := c.Holder.(Padder)
+				if ok {
+					hasHole = true
+					break
+				}
+			}
+			if !hasHole {
+				return
+			}
 		}
 		draw.Draw(w.pixels, a.Full, image.NewUniform(a.BackgroundColor()), image.Point{}, draw.Src)
 	})
