@@ -3,7 +3,7 @@ package stringctx
 import (
 	"fmt"
 
-	"github.com/kybin/weird/node/stringnode"
+	"github.com/kybin/yeird/node/stringnode"
 )
 
 type Context struct {

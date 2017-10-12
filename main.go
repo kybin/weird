@@ -4,7 +4,7 @@ import (
 	"image"
 	"image/color"
 
-	"github.com/kybin/weird/gui"
+	"github.com/kybin/yeird/gui"
 )
 
 func main() {
