@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"image"
 	"image/color"
-	"image/draw"
 	"log"
+	"math"
 
 	"golang.org/x/exp/shiny/driver"
 	"golang.org/x/exp/shiny/screen"
+	"golang.org/x/image/draw"
 	"golang.org/x/mobile/event/key"
 	"golang.org/x/mobile/event/lifecycle"
 	"golang.org/x/mobile/event/mouse"
@@ -129,7 +130,8 @@ type Area struct {
 	Parent *Area
 	Holder PlaceHolder
 
-	BgColor *color.RGBA
+	BgColor      *color.RGBA
+	BorderRadius int
 
 	ChildMap map[string]*Area
 	Children []*Area
@@ -151,6 +153,92 @@ func (a *Area) DoRecursive(f func(*Area)) {
 	f(a)
 	for _, ch := range a.Children {
 		ch.DoRecursive(f)
+	}
+}
+
+// drawBackground draws the Area's background according to it's radius.
+func drawBackground(a *Area) {
+	pixels := a.Window.pixels
+	full := a.Full
+	bgc := a.BackgroundColor()
+	draw.Draw(pixels, full.Bounds(), image.NewUniform(bgc), image.Point{}, draw.Src)
+
+	if a.BorderRadius <= 0 {
+		// Nothing to do more.
+		return
+	}
+
+	// Redraw corners.
+
+	// Recalcuate radius size.
+	smaller := full.Bounds().Dx()
+	if full.Bounds().Dy() < smaller {
+		smaller = full.Bounds().Dy()
+	}
+	half := smaller / 2
+	rad := a.BorderRadius
+	if rad > half {
+		rad = half
+	}
+
+	// Reference points to make bounds.
+	x0, x1, x2, x3 := full.Min.X, full.Min.X+rad, full.Max.X-rad, full.Max.X
+	y0, y1, y2, y3 := full.Min.Y, full.Min.Y+rad, full.Max.Y-rad, full.Max.Y
+
+	// Create corner images.
+	topLeft := image.NewRGBA(image.Rect(x0, y0, x1, y1))
+	topRight := image.NewRGBA(image.Rect(x2, y0, x3, y1))
+	bottomLeft := image.NewRGBA(image.Rect(x0, y2, x1, y3))
+	bottomRight := image.NewRGBA(image.Rect(x2, y2, x3, y3))
+
+	// Draw topLeft.
+	r, g, b, alpha := bgc.RGBA()
+	var pBgc color.Color = color.Black
+	if a.Parent != nil {
+		pBgc = a.Parent.BackgroundColor()
+	}
+	pr, pg, pb, palpha := pBgc.RGBA()
+
+	circleCenter := topLeft.Bounds().Max
+	for j := topLeft.Bounds().Min.Y; j < topLeft.Bounds().Max.Y; j++ {
+		for i := topLeft.Bounds().Min.X; i < topLeft.Bounds().Max.X; i++ {
+			dx := math.Abs(float64(circleCenter.X - i))
+			dy := math.Abs(float64(circleCenter.Y - j))
+			// TODO: composite colors around the border
+			if int(math.Sqrt(dx*dx+dy*dy)) > a.BorderRadius {
+				topLeft.SetRGBA(i, j, color.RGBA{uint8(pr), uint8(pg), uint8(pb), uint8(palpha)})
+			} else {
+				topLeft.SetRGBA(i, j, color.RGBA{uint8(r), uint8(g), uint8(b), uint8(alpha)})
+			}
+		}
+	}
+
+	// Draw others.
+	rotate90(topRight, topLeft)
+	rotate90(bottomRight, topRight)
+	rotate90(bottomLeft, bottomRight)
+
+	// Pasting it to Window pixels.
+	imgs := []image.Image{topLeft, topRight, bottomRight, bottomLeft}
+	for _, img := range imgs {
+		b := img.Bounds()
+		draw.Draw(pixels, b, img, b.Min, draw.Src)
+	}
+}
+
+// rotate90 rotates src image 90 degree from center, and draw it to dst.
+// src and dst should sqare and have same size, but their bounds don't need to be same.
+func rotate90(dst, src *image.RGBA) {
+	for j := dst.Bounds().Min.Y; j < dst.Bounds().Max.Y; j++ {
+		for i := dst.Bounds().Min.X; i < dst.Bounds().Max.X; i++ {
+			x := i - dst.Bounds().Min.X
+			y := j - dst.Bounds().Min.Y
+			x, y = y, -x // rotate -90 degree
+			x += src.Bounds().Min.X
+			y += src.Bounds().Min.Y + src.Bounds().Dy() - 1
+			r, g, b, alpha := src.At(x, y).RGBA()
+			dst.SetRGBA(i, j, color.RGBA{uint8(r), uint8(g), uint8(b), uint8(alpha)})
+		}
 	}
 }
 
@@ -256,6 +344,6 @@ func (w *Window) Draw() {
 				return
 			}
 		}
-		draw.Draw(w.pixels, a.Full, image.NewUniform(a.BackgroundColor()), image.Point{}, draw.Src)
+		drawBackground(a)
 	})
 }

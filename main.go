@@ -33,9 +33,10 @@ func main() {
 						BgColor: &color.RGBA{255, 0, 0, 255},
 					},
 					&gui.Area{
-						Name:    "pad",
-						Holder:  gui.Padder{20},
-						BgColor: &color.RGBA{0, 255, 255, 255},
+						Name:         "pad",
+						Holder:       gui.Padder{20},
+						BgColor:      &color.RGBA{0, 255, 255, 255},
+						BorderRadius: 10,
 					},
 				},
 			},
