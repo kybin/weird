@@ -23,6 +23,13 @@ func main() {
 						Holder:       gui.Padder{5},
 						BgColor:      &color.RGBA{70, 70, 90, 255},
 						BorderRadius: 5,
+						Children: []*gui.Area{
+							&gui.Area{
+								Name:    "file",
+								Holder:  gui.LeftHolder{100},
+								BgColor: &color.RGBA{80, 80, 100, 255},
+							},
+						},
 					},
 				},
 			},

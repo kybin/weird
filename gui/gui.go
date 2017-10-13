@@ -331,19 +331,16 @@ func (w *Window) Fit() {
 
 func (w *Window) Draw() {
 	w.Area.DoRecursive(func(a *Area) {
-		if a.Children != nil {
-			hasHole := false
-			for _, c := range a.Children {
-				_, ok := c.Holder.(Padder)
-				if ok {
-					hasHole = true
-					break
-				}
-			}
-			if !hasHole {
+		if !a.Avail.Empty() {
+			drawBackground(a)
+			return
+		}
+		for _, c := range a.Children {
+			_, ok := c.Holder.(Padder)
+			if ok {
+				drawBackground(a)
 				return
 			}
 		}
-		drawBackground(a)
 	})
 }
