@@ -15,8 +15,16 @@ func main() {
 		Children: []*gui.Area{
 			&gui.Area{
 				Name:    "header",
-				Holder:  gui.TopHolder{100},
+				Holder:  gui.TopHolder{40},
 				BgColor: &color.RGBA{255, 255, 255, 255},
+				Children: []*gui.Area{
+					&gui.Area{
+						Name:         "menus",
+						Holder:       gui.Padder{5},
+						BgColor:      &color.RGBA{70, 70, 90, 255},
+						BorderRadius: 5,
+					},
+				},
 			},
 			&gui.Area{
 				Name:    "footer",
