@@ -137,11 +137,100 @@ type Area struct {
 	Children []*Area
 }
 
+func (a *Area) Path() string {
+	path := a.Name
+	p := a
+	for p.Parent != nil {
+		p = p.Parent
+		path = p.Name + "/" + path
+	}
+	return path
+}
+
+func (a *Area) Radius() int {
+	// Recalcuate radius size.
+	full := a.Full
+	smaller := full.Bounds().Dx()
+	if full.Bounds().Dy() < smaller {
+		smaller = full.Bounds().Dy()
+	}
+	half := smaller / 2
+	rad := a.BorderRadius
+	if rad > half {
+		rad = half
+	}
+	return rad
+}
+
 func (a *Area) DoRecursive(f func(*Area)) {
 	f(a)
 	for _, ch := range a.Children {
 		ch.DoRecursive(f)
 	}
+}
+
+func (a *Area) Has(p image.Point) bool {
+	if a.BorderRadius <= 0 {
+		return inside(a.Full, p)
+	}
+
+	// Reference points to make bounds.
+	full := a.Full
+	rad := a.Radius()
+
+	x0, x1, x2, x3 := full.Min.X, full.Min.X+rad, full.Max.X-rad, full.Max.X
+	y0, y1, y2, y3 := full.Min.Y, full.Min.Y+rad, full.Max.Y-rad, full.Max.Y
+
+	if x1 <= p.X && p.X < x2 && y0 <= p.Y && p.Y < y3 {
+		return true
+	}
+	if x0 <= p.X && p.X < x3 && y1 <= p.Y && p.Y < y2 {
+		return true
+	}
+
+	// check corners
+	circlePoints := []image.Point{
+		image.Pt(x1, y1), image.Pt(x2, y1),
+		image.Pt(x1, y2), image.Pt(x2, y2),
+	}
+	for _, cp := range circlePoints {
+		if int(distance(cp, p)) <= rad {
+			return true
+		}
+	}
+	return false
+}
+
+func findAreaAt(a *Area, p image.Point) *Area {
+	if !a.Has(p) {
+		return nil
+	}
+	if a.Children == nil || len(a.Children) == 0 {
+		return a
+	}
+	for _, c := range a.Children {
+		ca := findAreaAt(c, p)
+		if ca != nil {
+			return ca
+		}
+	}
+	return a
+}
+
+func inside(r image.Rectangle, p image.Point) bool {
+	if p.X < r.Min.X || r.Max.X <= p.X {
+		return false
+	}
+	if p.Y < r.Min.Y || r.Max.Y <= p.Y {
+		return false
+	}
+	return true
+}
+
+func distance(a, b image.Point) float64 {
+	dx := b.X - a.X
+	dy := b.Y - a.Y
+	return math.Sqrt(float64(dx*dx + dy*dy))
 }
 
 // drawBackground draws the Area's background according to it's radius.
@@ -271,6 +360,13 @@ func (win *Window) Open() {
 				}
 			case key.Event:
 			case mouse.Event:
+				if e.Direction != mouse.DirPress {
+					continue
+				}
+				a := findAreaAt(win.Area, image.Pt(int(e.X), int(e.Y)))
+				if a != nil {
+					fmt.Println(a.Path())
+				}
 			case size.Event:
 				win.Size = image.Point{e.WidthPx, e.HeightPx}
 				buf, err = s.NewBuffer(win.Size)
