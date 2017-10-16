@@ -25,9 +25,8 @@ func main() {
 						BorderRadius: 5,
 						Children: []*gui.Area{
 							&gui.Area{
-								Name:    "file",
-								Holder:  gui.LeftHolder{100},
-								BgColor: &color.RGBA{80, 80, 100, 255},
+								Name:   "file",
+								Holder: gui.LeftHolder{100},
 							},
 						},
 					},
