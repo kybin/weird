@@ -137,18 +137,6 @@ type Area struct {
 	Children []*Area
 }
 
-func (a *Area) BackgroundColor() color.RGBA {
-	p := a
-	for p != nil {
-		if p.BgColor != nil {
-			// TODO: composite with it's parent color.
-			return *p.BgColor
-		}
-		p = p.Parent
-	}
-	return color.RGBA{}
-}
-
 func (a *Area) DoRecursive(f func(*Area)) {
 	f(a)
 	for _, ch := range a.Children {
@@ -160,7 +148,11 @@ func (a *Area) DoRecursive(f func(*Area)) {
 func drawBackground(a *Area) {
 	pixels := a.Window.pixels
 	full := a.Full
-	bgc := a.BackgroundColor()
+	bgc := a.BgColor
+	if bgc == nil {
+		return
+	}
+
 	draw.Draw(pixels, full.Bounds(), image.NewUniform(bgc), image.Point{}, draw.Src)
 
 	if a.BorderRadius <= 0 {
@@ -194,8 +186,8 @@ func drawBackground(a *Area) {
 	// Draw topLeft.
 	r, g, b, alpha := bgc.RGBA()
 	var pBgc color.Color = color.Black
-	if a.Parent != nil {
-		pBgc = a.Parent.BackgroundColor()
+	if a.Parent != nil && a.Parent.BgColor != nil {
+		pBgc = a.Parent.BgColor
 	}
 	pr, pg, pb, palpha := pBgc.RGBA()
 
